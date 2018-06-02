@@ -1,0 +1,7 @@
+{
+  "binary": "/anaconda3/bin/pyre.bin",
+  "source_directories": [
+    "."
+  ],
+  "typeshed": "/anaconda3/lib/pyre_check/typeshed/stdlib/"
+}
