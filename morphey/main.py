@@ -2,7 +2,7 @@ from .IO import OUT, IN
 
 
 def main():
-    print('test')
+    print('main')
 
 
 if __name__ == '__main__':
