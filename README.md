@@ -9,7 +9,7 @@ Run the environment shell for the package:
 pipenv shell
 ```
 
-And use `Predictor` to predict grammemes. Keep in mind that it may need a some time to load the model to the memory.
+And use `Predictor` to predict grammemes. Keep in mind that it may need some time to load the model to the memory.
 
 ```
 python
