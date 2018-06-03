@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "415dfdcb118dd9bdfef17671cb7dcd78dbd69b6ae7d4f39e8b44e71d60ca72e7"
+            "sha256": "d673da30a45359c6f5d444d50e81c3c72941415af22c64d219cc824413bea7b3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -9,8 +9,8 @@
         },
         "sources": [
             {
-                "name": "pypi",
-                "url": "https://pypi.org/simple",
+                "name": "morphey",
+                "url": "https://github.com/lttb/morphy",
                 "verify_ssl": true
             }
         ]

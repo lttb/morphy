@@ -1,7 +1,7 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = "https://github.com/lttb/morphy"
 verify_ssl = true
-name = "pypi"
+name = "morphey"
 
 [packages]
 
