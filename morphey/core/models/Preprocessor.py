@@ -7,19 +7,24 @@ from ..utils.sylls import custom
 
 Hashes = dict()
 
-Sylls = dict()
-Sylls_idx = dict()
-
 MISSED = -1
 
 split_sylls = custom.split
 
 
+def normalize(word: str) -> str:
+    return word.replace('ё', 'е')
+
+
 class Preprocessor:
-    def __init__(self):
-        self.x = []
-        self.y = []
-        self.Forms = dict()
+    def __init__(
+        self, x=[], y=[], Forms=dict(), Sylls=dict(), Sylls_idx=dict()
+    ):
+        self.x = x
+        self.y = y
+        self.Forms = Forms
+        self.Sylls = Sylls
+        self.Sylls_idx = Sylls_idx
 
         self.y_encoder = LabelEncoder()
         self.x_encoder = Imputer(missing_values=MISSED)
@@ -27,7 +32,7 @@ class Preprocessor:
         self.x_maxlen = 5
 
     def add(self, form, grams):
-        x = get_vector(form)
+        x = self.get_vector(form)
         y = grams
 
         if (form not in self.Forms):
@@ -48,7 +53,7 @@ class Preprocessor:
         )
 
     def vectorize(self, word):
-        vector = get_vector(word)
+        vector = self.get_vector(word)
         return self.transform_x([vector])
 
     def transform_x(self, x):
@@ -64,42 +69,35 @@ class Preprocessor:
 
         return [x_fitted, y_fitted]
 
+    def get_hash(self, s: str) -> int:
+        if (s not in self.Sylls):
+            i = len(self.Sylls)
+            self.Sylls[s] = i
+            self.Sylls_idx[i] = s
+        return self.Sylls[s]
 
-def normalize(word: str) -> str:
-    return word.replace('ё', 'е')
+    def get_vector(self, word: str) -> List[int]:
+        word = normalize(word)
 
+        sylls = split_sylls(word)
+        arr = reversed(sylls)
 
-def get_hash(s: str) -> int:
-    if (s not in Sylls):
-        i = len(Sylls)
-        Sylls[s] = i
-        Sylls_idx[i] = s
-    return Sylls[s]
+        vector = []
+        for syll in arr:
+            vector.append(self.get_hash(syll))
 
+        return vector
 
-def get_vector(word: str) -> List[int]:
-    word = normalize(word)
-
-    sylls = split_sylls(word)
-    arr = reversed(sylls)
-
-    vector = []
-    for syll in arr:
-        vector.append(get_hash(syll))
-
-    return vector
-
-
-def get_base(lemma: str, forms) -> str:
-    base = normalize(lemma)
-
-    # calc base
-    for f in forms:
-        word = normalize(f.get('t'))
-
-        i = 0
-        while (base not in word):
-            i = i + 1
-            base = base[:-i]
-
-    return base
+    # def get_base(self, lemma: str, forms) -> str:
+    #     base = self.normalize(lemma)
+    #
+    #     # calc base
+    #     for f in forms:
+    #         word = self.normalize(f.get('t'))
+    #
+    #         i = 0
+    #         while (base not in word):
+    #             i = i + 1
+    #             base = base[:-i]
+    #
+    #     return base

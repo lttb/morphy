@@ -5,13 +5,13 @@ import xml.etree.cElementTree as ET
 import zipfile
 import pickle as pickle
 
-from .models.Preprocessor import Preprocessor
-from .models.RNN import RNN
-
-import time
+from morphey.core.models.Preprocessor import Preprocessor
+from morphey.core.models.RNN import RNN
 
 import random
 import pathlib
+
+import time
 
 
 def get_lemmata():
@@ -90,11 +90,16 @@ def train(lemmata):
 
     [x, y] = prepr.fit()
 
+    print('done', '\n')
+
+    _dir = f'morphey/models/rnn/{int(time.time())}'
+
+    with open(f'{_dir}/prepr.pkl', 'wb') as f:
+        pickle.dump(prepr, f)
+
     train_x, test_x, train_y, test_y = train_test_split(
         x, to_categorical(y), test_size=0.30, random_state=random.seed(9)
     )
-
-    print('done', '\n')
 
     rnn = RNN(train_x.shape, len(prepr.y_encoder.classes_))
 
@@ -102,45 +107,17 @@ def train(lemmata):
         train_x,
         train_y,
         validation_data=(test_x, test_y),
-        epochs=2,
+        epochs=5,
         batch_size=64
     )
 
-    _dir = f'morphey/models/rnn/{int(time.time())}'
-
     pathlib.Path(_dir).mkdir(parents=True, exist_ok=True)
 
-    rnn.model.save(f'{_dir}/base')
-    with open(f'{_dir}/meta', 'wb') as f:
+    rnn.model.save(f'{_dir}/base.h5')
+    with open(f'{_dir}/meta.pkl', 'wb') as f:
         pickle.dump(res.history, f)
 
-    total = 0
-    errors = []
-    start = time.perf_counter()
-    for key, w in list(prepr.Forms.items()):
-        total += 1
-
-        v = prepr.vectorize(key)
-
-        cl = prepr.y_encoder.classes_[rnn.model.predict_classes(v)][0]
-
-        is_valid = False
-        for s in w:
-            if (set(s).issuperset(set(cl))):
-                is_valid = True
-                break
-
-        if (not is_valid):
-            errors.append((key, w, cl))
-
-    end = time.perf_counter()
-
-    print('total: ', total)
-    print('acc: ', (total - len(errors)) / total * 100)
-    print('errors total: ', len(errors))
-    print('time (s): ', end - start)
-
-    print(errors[0:10])
+    return [rnn, prepr]
 
 
 if __name__ == '__main__':

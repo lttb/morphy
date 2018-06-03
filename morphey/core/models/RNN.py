@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.layers import (
     Dense, Dropout, Activation, LSTM, Embedding, Bidirectional, Conv1D,
-    MaxPooling1D
+    MaxPooling1D, BatchNormalization
 )
 
 
@@ -36,6 +36,7 @@ class RNN:
         # model.add(Bidirectional(LSTM(classes)))
         model.add(Dropout(0.2))
         model.add(Dense(classes))
+        model.add(BatchNormalization())
         model.add(Activation('softmax'))
 
         model.compile(

@@ -16,4 +16,12 @@ def run(lemmata):
     RNN = importlib.reload(morphey.core.models.RNN).RNN
     train = importlib.reload(morphey.core.train).train
 
+    return train(lemmata)
+
+
+if __name__ == '__main__':
+    print('loading the dictionary...', '\n')
+    lemmata = get_lemmata()
+    print('done', '\n')
+
     train(lemmata)
